@@ -1,25 +1,63 @@
-interface InstanceType {
+type instanceType = undefined | CounterInterface;
+interface CounterInterface {
   count: number,
-  [propName: string]: any
+  getCount(): number,
+  increaseCount(): number,
 }
 
-let instance: InstanceType = {
-  count: number,
-}
+class Counter implements CounterInterface{
 
-class Counter {
+  count = 0;
+  private static instance: instanceType = undefined;
+
   constructor() {
-    if (!instance) instance = this
-    instance.count = 0
-    return instance
-  }
 
-  getCount(): number {
-    return instance.count
-  }
+    if (typeof Counter.instance === 'object'){
+      return Counter.instance
+    }
 
-  increaseCount(): number {
-    return instance.count++
-  }
+    Counter.instance = this;
+    return this;
+  };
 
+  getCount() {
+    return this.count
+  };
+
+  increaseCount() {
+    return this.count++
+  };
 }
+
+const myCounter1 = new Counter();
+const myCounter2 = new Counter();
+
+myCounter2.increaseCount();
+myCounter2.increaseCount();
+
+console.log(myCounter1.getCount());
+
+
+type instanceSingleton = Record<string, any> | null
+interface SingletonInterface {
+  getInstance(): instanceSingleton
+}
+
+class Singleton implements SingletonInterface {
+
+  private static instance: instanceSingleton = null;
+
+  constructor(data) {
+    if (!Singleton.instance) Singleton.instance = data
+  }
+
+  getInstance(){
+    return Singleton.instance
+  }
+}
+
+const single = new Singleton({data: 'data'});
+const single1 = new Singleton({data: 'new data'});
+
+console.log(single.getInstance());
+console.log(single1.getInstance());
